@@ -1,0 +1,65 @@
+.masters-page {
+  padding: 20px;
+}
+
+.page-title {
+  font-size: 2rem;
+  font-weight: 500;
+  margin-bottom: 32px;
+  color: #202124;
+}
+
+.masters-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 24px;
+}
+
+.master-card {
+  background: white;
+  border-radius: 28px;
+  padding: 24px;
+  text-align: center;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.master-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 24px rgba(0,0,0,0.12);
+}
+
+.master-photo {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  object-fit: cover;
+  margin-bottom: 16px;
+}
+
+.master-name {
+  font-size: 1.25rem;
+  font-weight: 500;
+  margin-bottom: 8px;
+  color: #202124;
+}
+
+.master-specialization {
+  color: #1e88e5;
+  font-weight: 500;
+  margin-bottom: 4px;
+}
+
+.master-rank {
+  color: #5f6368;
+}
+
+@media (max-width: 768px) {
+  .masters-grid {
+    grid-template-columns: 1fr;
+  }
+  .master-photo {
+    width: 100px;
+    height: 100px;
+  }
+}

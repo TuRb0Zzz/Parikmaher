@@ -52,12 +52,21 @@ export const api = {
     addClient: (client) => request('/admin/clients', { method: 'POST', body: JSON.stringify(client) }),
     deleteClient: (id) => request(`/admin/clients/${id}`, { method: 'DELETE' }),
     updateClient: (id, data) => request(`/admin/clients/${id}`, { method: 'PUT', body: JSON.stringify(data) }),
+
     getMasters: () => request('/admin/masters'),
     addMaster: (formData) => request('/admin/masters', { method: 'POST', body: formData }),
+    updateMaster: (id, formData) => request(`/admin/masters/${id}`, { method: 'PUT', body: formData }),
     deleteMaster: (id) => request(`/admin/masters/${id}`, { method: 'DELETE' }),
+
     getServices: () => request('/admin/services'),
     addService: (formData) => request('/admin/services', { method: 'POST', body: formData }),
+    updateService: (id, formData) => request(`/admin/services/${id}`, { method: 'PUT', body: formData }),
     deleteService: (id) => request(`/admin/services/${id}`, { method: 'DELETE' }),
+
+    // НОВЫЕ МЕТОДЫ ДЛЯ УПРАВЛЕНИЯ БРОНИРОВАНИЯМИ
+    getAllBookings: () => request('/admin/bookings'),
+    confirmBooking: (bookingId) => request(`/admin/bookings/${bookingId}/confirm`, { method: 'PUT' }),
+
     getReports: {
       clientsByDate: (date) => request(`/admin/reports/clients?date=${date}`),
       masterEarnings: (date, masterId) => request(`/admin/reports/earnings?date=${date}&masterId=${masterId}`),

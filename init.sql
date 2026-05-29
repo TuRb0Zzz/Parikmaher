@@ -40,7 +40,7 @@ CREATE TABLE IF NOT EXISTS bookings (
     service_id INT NOT NULL REFERENCES services(id),
     master_id INT NOT NULL REFERENCES masters(id),
     booking_date TIMESTAMP NOT NULL,
-    status VARCHAR(20) DEFAULT 'active',
+    status VARCHAR(20) DEFAULT 'pending',
     created_at TIMESTAMP DEFAULT NOW()
 );
 

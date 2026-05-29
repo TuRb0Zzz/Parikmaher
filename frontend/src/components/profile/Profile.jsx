@@ -64,8 +64,17 @@ function Profile() {
           <ul>
             {bookings.map(booking => (
               <li key={booking.id}>
-                <span>{booking.service_name} - {booking.master_name} - {new Date(booking.date).toLocaleString()}</span>
-                <button onClick={() => handleCancel(booking.id)}>Отменить</button>
+                <div className="booking-info">
+                  <span>{booking.service_name} - {booking.master_name} - {new Date(booking.date).toLocaleString()}</span>
+                  <span className={`booking-status status-${booking.status}`}>
+                    {booking.status === 'pending' && ' (ожидает подтверждения)'}
+                    {booking.status === 'confirmed' && ' (подтверждено)'}
+                    {booking.status === 'cancelled' && ' (отменено)'}
+                  </span>
+                </div>
+                {booking.status === 'pending' && (
+                  <button onClick={() => handleCancel(booking.id)}>Отменить</button>
+                )}
               </li>
             ))}
           </ul>

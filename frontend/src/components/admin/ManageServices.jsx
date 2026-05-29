@@ -18,6 +18,7 @@ function ManageServices() {
       setServices(Array.isArray(data) ? data : []);
     } catch (err) {
       console.error(err);
+      setServices([]);
     }
   };
 
@@ -31,21 +32,16 @@ function ManageServices() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const fd = new FormData();
-    fd.append('name', form.name);
-    fd.append('gender', form.gender);
-    fd.append('price', form.price);
-    fd.append('discount', form.discount);
-    if (form.photo) fd.append('photo', form.photo);
     try {
+      const fd = new FormData();
+      fd.append('name', form.name);
+      fd.append('gender', form.gender);
+      fd.append('price', form.price);
+      fd.append('discount', form.discount);
+      if (form.photo) fd.append('photo', form.photo);
+
       if (editingId) {
-        // Для редактирования фото не поддерживается
-        await api.admin.updateService(editingId, {
-          name: form.name,
-          gender: form.gender,
-          price: form.price,
-          discount: form.discount,
-        });
+        await api.admin.updateService(editingId, fd);
         setEditingId(null);
       } else {
         await api.admin.addService(fd);
@@ -73,8 +69,19 @@ function ManageServices() {
   const handleDelete = async (id) => {
     if (window.confirm('Удалить услугу?')) {
       await api.admin.deleteService(id);
+      if (editingId === id) {
+        setEditingId(null);
+        setForm({ name: '', gender: 'male', price: '', discount: 0, photo: null });
+        setPreview(null);
+      }
       loadServices();
     }
+  };
+
+  const handleCancelEdit = () => {
+    setEditingId(null);
+    setForm({ name: '', gender: 'male', price: '', discount: 0, photo: null });
+    setPreview(null);
   };
 
   return (
@@ -107,20 +114,19 @@ function ManageServices() {
           value={form.discount}
           onChange={e => setForm({...form, discount: e.target.value})}
         />
-        <input type="file" accept="image/*" onChange={handleFileChange} />
+
+        <div className="file-input-wrapper">
+          <input type="file" id="service-photo" accept="image/*" onChange={handleFileChange} />
+          <label htmlFor="service-photo" className="file-input-label">
+            {editingId ? 'Изменить фото' : 'Выбрать фото'}
+          </label>
+        </div>
         {preview && <img src={preview} alt="Preview" className="preview-image" />}
+
         <div className="form-actions">
           <button type="submit" className="btn-primary">{editingId ? 'Обновить' : 'Добавить'}</button>
           {editingId && (
-            <button
-              type="button"
-              className="btn-secondary"
-              onClick={() => {
-                setEditingId(null);
-                setForm({ name: '', gender: 'male', price: '', discount: 0, photo: null });
-                setPreview(null);
-              }}
-            >
+            <button type="button" className="btn-secondary" onClick={handleCancelEdit}>
               Отмена
             </button>
           )}
@@ -130,9 +136,7 @@ function ManageServices() {
       <div className="material-table-container">
         <table className="material-table">
           <thead>
-            <tr>
-              <th>ID</th><th>Название</th><th>Пол</th><th>Цена</th><th>Скидка %</th><th>Фото</th><th>Действия</th>
-            </tr>
+            <tr><th>ID</th><th>Название</th><th>Пол</th><th>Цена</th><th>Скидка %</th><th>Фото</th><th>Действия</th></tr>
           </thead>
           <tbody>
             {services.map(s => (

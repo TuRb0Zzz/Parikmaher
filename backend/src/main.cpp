@@ -15,7 +15,6 @@ int main() {
 
     app().createDbClient("postgresql", dbHost, dbPort, dbName, dbUser, dbPassword, 4, "", "default");
 
-    // CORS pre-flight
     app().registerPreRoutingAdvice([](const HttpRequestPtr &req, FilterCallback &&defer, FilterChainCallback &&chain) {
         if (req->method() == Options) {
             auto resp = HttpResponse::newHttpResponse();
@@ -33,7 +32,6 @@ int main() {
         chain();
     });
 
-    // Добавляем CORS заголовки во все ответы
     app().registerPostHandlingAdvice([](const HttpRequestPtr &req, const HttpResponsePtr &resp) {
         std::string origin = req->getHeader("Origin");
         if (!origin.empty()) {
@@ -42,15 +40,8 @@ int main() {
         }
     });
 
-    // Статика: раздача файлов из папки images по URL /images/...
     app().setDocumentRoot("./images");
-    app().setStaticFileHeaders({
-        {"Cache-Control", "public, max-age=86400"},
-        {"Access-Control-Allow-Origin", "http://localhost:3000"},
-        {"Access-Control-Allow-Credentials", "true"}
-    });
 
-    // Регистрация обработчиков
     app().registerHandler("/api/auth/register", &AuthController::registerUser, {Post});
     app().registerHandler("/api/auth/login", &AuthController::loginUser, {Post});
     app().registerHandler("/api/auth/me", &AuthController::me, {Get});
@@ -72,10 +63,15 @@ int main() {
     app().registerHandler("/api/admin/masters", &BusinessController::adminGetMasters, {Get});
     app().registerHandler("/api/admin/masters", &BusinessController::adminCreateMaster, {Post});
     app().registerHandler("/api/admin/masters/{1}", &BusinessController::adminDeleteMaster, {Delete});
+    app().registerHandler("/api/admin/masters/{1}", &BusinessController::adminUpdateMaster, {Put});
 
     app().registerHandler("/api/admin/services", &BusinessController::adminGetServices, {Get});
     app().registerHandler("/api/admin/services", &BusinessController::adminCreateService, {Post});
     app().registerHandler("/api/admin/services/{1}", &BusinessController::adminDeleteService, {Delete});
+    app().registerHandler("/api/admin/services/{1}", &BusinessController::adminUpdateService, {Put});
+
+    app().registerHandler("/api/admin/bookings", &BusinessController::adminGetAllBookings, {Get});
+    app().registerHandler("/api/admin/bookings/{1}/confirm", &BusinessController::adminConfirmBooking, {Put});
 
     app().registerHandler("/api/admin/reports/clients", &BusinessController::reportClientsByDate, {Get});
     app().registerHandler("/api/admin/reports/earnings", &BusinessController::reportEarnings, {Get});

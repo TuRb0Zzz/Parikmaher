@@ -8,9 +8,14 @@
 .material-form {
   display: flex;
   flex-wrap: wrap;
-  gap: 16px;
+  gap: 12px;
   margin-bottom: 32px;
   align-items: flex-end;
+}
+
+.material-form > * {
+  flex: 1 1 auto;
+  min-width: 150px;
 }
 
 .material-form input,
@@ -27,6 +32,41 @@
 .material-form select:focus {
   outline: none;
   border-color: #1e88e5;
+}
+
+.file-input-wrapper {
+  position: relative;
+  display: inline-block;
+}
+
+.file-input-wrapper input[type="file"] {
+  position: absolute;
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.file-input-label {
+  display: inline-block;
+  padding: 10px 20px;
+  background: #e8eaed;
+  border-radius: 24px;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: background 0.2s;
+  white-space: nowrap;
+}
+
+.file-input-label:hover {
+  background: #dadce0;
+}
+
+.preview-image {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  object-fit: cover;
+  margin-left: 8px;
 }
 
 .form-actions {
@@ -96,9 +136,78 @@
   opacity: 1;
 }
 
-.preview-image {
-  width: 60px;
-  height: 60px;
-  border-radius: 50%;
-  object-fit: cover;
+/* Стили для отчётов */
+.report-card h3 {
+  margin-top: 0;
+  margin-bottom: 16px;
+}
+
+.report-controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.report-controls input,
+.report-controls select,
+.report-controls button {
+  padding: 8px 12px;
+  border: 1px solid #dadce0;
+  border-radius: 24px;
+  font-size: 0.9rem;
+  background: white;
+  cursor: pointer;
+}
+
+.report-controls button {
+  background: #1e88e5;
+  color: white;
+  border: none;
+  font-weight: 500;
+}
+
+.report-controls button:hover {
+  background: #0b5fa7;
+}
+
+.report-result {
+  margin-top: 16px;
+  background: #f8f9fa;
+  padding: 16px;
+  border-radius: 20px;
+  font-size: 1rem;
+}
+
+.client-item {
+  padding: 8px 0;
+  border-bottom: 1px solid #eee;
+}
+
+@media (max-width: 768px) {
+  .material-form {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .material-form > * {
+    width: 100%;
+  }
+  .form-actions {
+    justify-content: flex-end;
+  }
+}
+
+.status-pending {
+  color: #f39c12;
+  font-weight: 500;
+}
+
+.status-confirmed {
+  color: #27ae60;
+  font-weight: 500;
+}
+
+.status-cancelled {
+  color: #e74c3c;
+  font-weight: 500;
 }

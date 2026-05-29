@@ -10,10 +10,18 @@ function BookingModal({ service, onClose, onSuccess }) {
   const [error, setError] = useState('');
 
   useEffect(() => {
-    api.masters.getAll().then(data => {
-      const filtered = data.filter(m => m.specialization === service.gender);
-      setMasters(filtered);
-    }).catch(console.error);
+    api.masters.getAll()
+      .then(data => {
+        // Защита: гарантируем, что data — массив
+        const allMasters = Array.isArray(data) ? data : [];
+        // Фильтруем по специализации услуги
+        const filtered = allMasters.filter(m => m.specialization === service.gender);
+        setMasters(filtered);
+      })
+      .catch(err => {
+        console.error('Ошибка загрузки мастеров:', err);
+        setMasters([]);
+      });
   }, [service]);
 
   const handleSubmit = async (e) => {
@@ -46,7 +54,9 @@ function BookingModal({ service, onClose, onSuccess }) {
             <select value={selectedMaster} onChange={e => setSelectedMaster(e.target.value)} required>
               <option value="">Мастер</option>
               {masters.map(m => (
-                <option key={m.id} value={m.id}>{m.name} ({m.specialization === 'male' ? 'муж.' : 'жен.'})</option>
+                <option key={m.id} value={m.id}>
+                  {m.name} ({m.specialization === 'male' ? 'муж.' : 'жен.'})
+                </option>
               ))}
             </select>
           </div>

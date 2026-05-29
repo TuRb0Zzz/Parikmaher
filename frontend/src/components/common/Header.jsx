@@ -15,7 +15,7 @@ function Header() {
   return (
     <header className="header">
       <div className="header-container">
-        <Link to="/" className="logo">Парикмахерская</Link>
+        <Link to="/" className="logo">HairCraft</Link>
         <nav className="nav">
           <Link to="/services" className="nav-link">Услуги</Link>
           <Link to="/masters" className="nav-link">Мастера</Link>

@@ -86,3 +86,27 @@
     text-align: center;
   }
 }
+
+.booking-info {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.booking-status {
+  font-weight: 500;
+}
+
+.status-pending {
+  color: #f39c12;
+}
+
+.status-confirmed {
+  color: #27ae60;
+}
+
+.status-cancelled {
+  color: #e74c3c;
+}

@@ -4,16 +4,20 @@ import './HomePage.css';
 function HomePage() {
   return (
     <div className="homepage">
-      {/* Hero-блок: только фон (градиент или сплошной цвет), без изображения */}
       <div className="hero-section">
-        <div className="hero-overlay"></div>
+        <div className="hero-animation">
+          
+          <div className="hero-overlay"></div>
+        </div>
+        <div className="hero-slide-image">
+          <img src="/barber-photo.jpg" alt="Парикмахер" />
+        </div>
         <div className="hero-content">
           <h1 className="hero-title">HairCraft</h1>
           <p className="hero-subtitle">Стиль, который вам идёт</p>
         </div>
       </div>
 
-      {/* Блок "О нас" – без эмодзи */}
       <div className="about-section">
         <div className="container">
           <h2>О нас</h2>
@@ -35,7 +39,6 @@ function HomePage() {
         </div>
       </div>
 
-      {/* Блок "Наши работы" – галерея */}
       <div className="gallery-section">
         <div className="container">
           <h2>Наши работы</h2>

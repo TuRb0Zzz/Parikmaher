@@ -10,6 +10,7 @@ import AdminPanel from './components/admin/AdminPanel';
 import ManageClients from './components/admin/ManageClients';
 import ManageMasters from './components/admin/ManageMasters';
 import ManageServices from './components/admin/ManageServices';
+import ManageBookings from './components/admin/ManageBookings';
 import Reports from './components/admin/Reports';
 import HomePage from './components/home/HomePage';
 import './App.css';
@@ -37,6 +38,7 @@ function AppRoutes() {
             <Route path="clients" element={<ManageClients />} />
             <Route path="masters" element={<ManageMasters />} />
             <Route path="services" element={<ManageServices />} />
+            <Route path="bookings" element={<ManageBookings />} />
             <Route path="reports" element={<Reports />} />
           </Route>
         </Routes>

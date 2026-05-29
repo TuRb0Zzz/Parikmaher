@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { api } from '../../services/api';
-import './ManageClients.css';
+import './AdminStyles.css';
 
 function ManageClients() {
   const [clients, setClients] = useState([]);
@@ -17,6 +17,7 @@ function ManageClients() {
       setClients(Array.isArray(data) ? data : []);
     } catch (err) {
       console.error(err);
+      setClients([]);
     }
   };
 

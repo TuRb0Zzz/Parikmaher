@@ -18,6 +18,7 @@ function ManageMasters() {
       setMasters(Array.isArray(data) ? data : []);
     } catch (err) {
       console.error(err);
+      setMasters([]);
     }
   };
 
@@ -31,15 +32,16 @@ function ManageMasters() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const fd = new FormData();
-    fd.append('name', form.name);
-    fd.append('specialization', form.specialization);
-    fd.append('rank', form.rank);
-    if (form.photo) fd.append('photo', form.photo);
     try {
+      // Всегда используем FormData, чтобы при необходимости передать фото
+      const fd = new FormData();
+      fd.append('name', form.name);
+      fd.append('specialization', form.specialization);
+      fd.append('rank', form.rank);
+      if (form.photo) fd.append('photo', form.photo);
+
       if (editingId) {
-        // Для редактирования фото не поддерживается (можно расширить API)
-        await api.admin.updateMaster(editingId, { name: form.name, specialization: form.specialization, rank: form.rank });
+        await api.admin.updateMaster(editingId, fd);
         setEditingId(null);
       } else {
         await api.admin.addMaster(fd);
@@ -66,8 +68,20 @@ function ManageMasters() {
   const handleDelete = async (id) => {
     if (window.confirm('Удалить мастера?')) {
       await api.admin.deleteMaster(id);
+      // Сброс формы редактирования, если удаляемый мастер был в режиме редактирования
+      if (editingId === id) {
+        setEditingId(null);
+        setForm({ name: '', specialization: 'male', rank: '', photo: null });
+        setPreview(null);
+      }
       loadMasters();
     }
+  };
+
+  const handleCancelEdit = () => {
+    setEditingId(null);
+    setForm({ name: '', specialization: 'male', rank: '', photo: null });
+    setPreview(null);
   };
 
   return (
@@ -93,20 +107,20 @@ function ManageMasters() {
           onChange={e => setForm({...form, rank: e.target.value})}
           required
         />
-        <input type="file" accept="image/*" onChange={handleFileChange} />
+
+        {/* Кнопка выбора файла всегда видна */}
+        <div className="file-input-wrapper">
+          <input type="file" id="master-photo" accept="image/*" onChange={handleFileChange} />
+          <label htmlFor="master-photo" className="file-input-label">
+            {editingId ? 'Изменить фото' : 'Выбрать фото'}
+          </label>
+        </div>
         {preview && <img src={preview} alt="Preview" className="preview-image" />}
+
         <div className="form-actions">
           <button type="submit" className="btn-primary">{editingId ? 'Обновить' : 'Добавить'}</button>
           {editingId && (
-            <button
-              type="button"
-              className="btn-secondary"
-              onClick={() => {
-                setEditingId(null);
-                setForm({ name: '', specialization: 'male', rank: '', photo: null });
-                setPreview(null);
-              }}
-            >
+            <button type="button" className="btn-secondary" onClick={handleCancelEdit}>
               Отмена
             </button>
           )}
@@ -116,9 +130,7 @@ function ManageMasters() {
       <div className="material-table-container">
         <table className="material-table">
           <thead>
-            <tr>
-              <th>ID</th><th>ФИО</th><th>Специализация</th><th>Разряд</th><th>Фото</th><th>Действия</th>
-            </tr>
+            <tr><th>ID</th><th>ФИО</th><th>Специализация</th><th>Разряд</th><th>Фото</th><th>Действия</th></tr>
           </thead>
           <tbody>
             {masters.map(m => (

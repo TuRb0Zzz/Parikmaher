@@ -1,7 +1,7 @@
 services:
   postgres:
     image: postgres:15
-    container_name: parikmaher_postgres
+    container_name: postgres
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: 123456
@@ -21,7 +21,7 @@ services:
 
   backend:
     build: ./backend
-    container_name: parikmaher_backend
+    container_name: backend
     ports:
       - "8080:8080"
     environment:
@@ -36,6 +36,10 @@ services:
       postgres:
         condition: service_healthy
     restart: on-failure
+    ulimits:
+      nofile:
+        soft: 65536
+        hard: 65536
     networks:
       - backend_network
 

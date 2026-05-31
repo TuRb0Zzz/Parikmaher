@@ -63,8 +63,6 @@ static Json::Value formatPhotoUrl(const string& filename) {
     return Json::Value("http://localhost:8080/" + filename);
 }
 
-// ==================== Публичные ====================
-
 Task<HttpResponsePtr> BusinessController::getServices(const HttpRequestPtr req) {
     auto db = app().getDbClient("default");
     auto result = co_await db->execSqlCoro("SELECT id, name, gender, price, discount, photo_url FROM services");
@@ -103,8 +101,6 @@ Task<HttpResponsePtr> BusinessController::getMasters(const HttpRequestPtr req) {
     resp->setStatusCode(k200OK);
     co_return resp;
 }
-
-// ==================== Пользовательские ====================
 
 Task<HttpResponsePtr> BusinessController::createBooking(const HttpRequestPtr req) {
     int userId = co_await getUserIdFromToken(req);
@@ -258,7 +254,6 @@ Task<HttpResponsePtr> BusinessController::rescheduleBooking(const HttpRequestPtr
     }
 }
 
-// ==================== Админ: клиенты ====================
 
 Task<HttpResponsePtr> BusinessController::adminGetClients(const HttpRequestPtr req) {
     auto [isAdmin, userId] = co_await checkAdmin(req);
@@ -427,7 +422,6 @@ Task<HttpResponsePtr> BusinessController::adminUpdateClient(const HttpRequestPtr
     }
 }
 
-// ==================== Админ: мастера ====================
 
 Task<HttpResponsePtr> BusinessController::adminGetMasters(const HttpRequestPtr req) {
     auto [isAdmin, userId] = co_await checkAdmin(req);
@@ -531,7 +525,6 @@ Task<HttpResponsePtr> BusinessController::adminDeleteMaster(const HttpRequestPtr
     }
     auto db = app().getDbClient("default");
     try {
-        // Проверяем, есть ли связанные бронирования
         auto bookingCheck = co_await db->execSqlCoro(
             "SELECT id FROM bookings WHERE master_id = $1 LIMIT 1", id);
         if (!bookingCheck.empty()) {
@@ -541,7 +534,6 @@ Task<HttpResponsePtr> BusinessController::adminDeleteMaster(const HttpRequestPtr
             co_return resp;
         }
 
-        // Получаем photo_url перед удалением
         auto res = co_await db->execSqlCoro("SELECT photo_url FROM masters WHERE id = $1", id);
         if (!res.empty() && !res[0]["photo_url"].isNull()) {
             string filename = res[0]["photo_url"].as<string>();
@@ -641,7 +633,6 @@ Task<HttpResponsePtr> BusinessController::adminUpdateMaster(const HttpRequestPtr
     }
 }
 
-// ==================== Админ: услуги ====================
 
 Task<HttpResponsePtr> BusinessController::adminGetServices(const HttpRequestPtr req) {
     auto [isAdmin, userId] = co_await checkAdmin(req);
@@ -752,7 +743,6 @@ Task<HttpResponsePtr> BusinessController::adminDeleteService(const HttpRequestPt
     }
     auto db = app().getDbClient("default");
     try {
-        // Проверяем, есть ли связанные бронирования
         auto bookingCheck = co_await db->execSqlCoro(
             "SELECT id FROM bookings WHERE service_id = $1 LIMIT 1", id);
         if (!bookingCheck.empty()) {
@@ -876,7 +866,6 @@ Task<HttpResponsePtr> BusinessController::adminUpdateService(const HttpRequestPt
     }
 }
 
-// ==================== Админ: бронирования (включая клиентов) ====================
 
 Task<HttpResponsePtr> BusinessController::adminGetAllBookings(const HttpRequestPtr req) {
     auto [isAdmin, userId] = co_await checkAdmin(req);
@@ -930,7 +919,6 @@ Task<HttpResponsePtr> BusinessController::adminConfirmBooking(const HttpRequestP
 
         co_await db->execSqlCoro("UPDATE bookings SET status = 'confirmed' WHERE id = $1", bookingId);
 
-        // Получаем данные для вставки в clients
         auto data = co_await db->execSqlCoro(
             "SELECT u.name AS user_name, u.category AS user_category, "
             "       s.name AS service_name, s.gender AS service_gender, "
@@ -946,7 +934,6 @@ Task<HttpResponsePtr> BusinessController::adminConfirmBooking(const HttpRequestP
             string serviceGender = data[0]["service_gender"].as<string>();
             string bookingDate = data[0]["booking_date"].as<string>();
 
-            // Проверяем, не добавлен ли уже клиент (по имени, услуге и дате)
             auto existing = co_await db->execSqlCoro(
                 "SELECT id FROM clients WHERE name = $1 AND service = $2 AND date = $3",
                 userName, serviceName, bookingDate);
@@ -971,7 +958,6 @@ Task<HttpResponsePtr> BusinessController::adminConfirmBooking(const HttpRequestP
     }
 }
 
-// ==================== Отчёты ====================
 
 Task<HttpResponsePtr> BusinessController::reportClientsByDate(const HttpRequestPtr req) {
     auto [isAdmin, userId] = co_await checkAdmin(req);
